@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, User } from 'lucide-react';
+import { BookOpen, User, Quote, PenTool, X, Send, Loader2, CheckCircle } from 'lucide-react';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Stories = () => {
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    authorAlias: '',
+    content: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/stories`)
@@ -18,51 +30,202 @@ const Stories = () => {
       });
   }, []);
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/stories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) throw new Error('Failed to submit story');
+
+      setSubmitSuccess(true);
+      setFormData({ title: '', authorAlias: '', content: '' });
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setShowModal(false);
+      }, 3000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Survivor Stories</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Read stories of courage and resilience. You are not alone in this journey.
-          Sharing our truth helps us heal and empowers others to speak up.
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Survivor Stories</h1>
+        <p className="text-slate-600 max-w-2xl mx-auto text-lg">
+          Stories of courage, resilience, and hope. Sharing our truth empowers us all.
         </p>
       </div>
 
       {loading ? (
-        <div className="text-center py-12">Loading stories...</div>
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {stories.map(story => (
-            <div key={story.id} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-pink-100 p-2 rounded-full">
-                  <User size={20} className="text-pink-600" />
-                </div>
-                <span className="font-semibold text-gray-700">{story.authorAlias}</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-1"
+          >
+            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 p-8 rounded-2xl border border-primary/10 h-full flex flex-col items-center justify-center text-center">
+              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                <PenTool size={32} className="text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-800">{story.title}</h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                "{story.content}"
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Share Your Story</h3>
+              <p className="text-slate-600 mb-6 text-sm">
+                Your voice matters. Sharing your experience can help others feel less alone and inspire hope.
               </p>
+              <Button
+                onClick={() => setShowModal(true)}
+                variant="primary"
+                className="w-full sm:w-auto"
+              >
+                Write a Story
+              </Button>
             </div>
-          ))}
+          </motion.div>
 
-          {/* Add Story Card */}
-          <div className="bg-purple-50 p-8 rounded-2xl border-2 border-dashed border-purple-200 flex flex-col items-center justify-center text-center">
-            <BookOpen size={48} className="text-purple-300 mb-4" />
-            <h3 className="text-lg font-bold text-gray-700 mb-2">Share Your Story</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Your story can inspire others. Share it anonymously with our community.
-            </p>
-            <button
-              onClick={() => alert("Story submission feature coming soon!")}
-              className="bg-white text-purple-600 border border-purple-200 px-6 py-2 rounded-full font-medium hover:bg-purple-600 hover:text-white transition"
+          {stories.map((story, index) => (
+            <motion.div
+              key={story.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
             >
-              Write a Story
-            </button>
-          </div>
+              <Card className="h-full hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-secondary/10 p-2 rounded-full">
+                    <User size={16} className="text-secondary" />
+                  </div>
+                  <span className="font-semibold text-slate-900 text-sm">{story.authorAlias || 'Anonymous'}</span>
+                </div>
+
+                <div className="mb-4 relative">
+                  <Quote className="absolute -top-2 -left-2 h-8 w-8 text-slate-100 -z-10" />
+                  <h3 className="text-lg font-bold mb-2 text-slate-800 group-hover:text-primary transition-colors">{story.title}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm line-clamp-6">
+                    {story.content}
+                  </p>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       )}
+
+      {/* Submission Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden"
+            >
+              {submitSuccess ? (
+                <div className="p-12 text-center">
+                  <div className="bg-green-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle className="h-10 w-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Story Submitted</h3>
+                  <p className="text-slate-600">
+                    Thank you for sharing your truth. Your story has been submitted for review and will be published shortly.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between items-center p-6 border-b border-slate-100">
+                    <h3 className="text-xl font-bold text-slate-900">Share Your Story</h3>
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    {error && (
+                      <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+                      <input
+                        type="text"
+                        name="title"
+                        required
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="Give your story a title"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Alias (Optional)</label>
+                      <input
+                        type="text"
+                        name="authorAlias"
+                        value={formData.authorAlias}
+                        onChange={handleChange}
+                        className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="Anonymous"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Your Story</label>
+                      <textarea
+                        name="content"
+                        required
+                        rows="6"
+                        value={formData.content}
+                        onChange={handleChange}
+                        className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
+                        placeholder="Write your story here..."
+                      ></textarea>
+                    </div>
+
+                    <div className="pt-2">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        className="w-full gap-2"
+                        disabled={submitting}
+                      >
+                        {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+                        {submitting ? 'Submitting...' : 'Submit Story'}
+                      </Button>
+                      <p className="text-xs text-slate-500 text-center mt-3">
+                        Your story will be reviewed before being published to ensure community guidelines are met.
+                      </p>
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Phone, MapPin, Navigation } from 'lucide-react';
+import { Phone, MapPin, Navigation, Search } from 'lucide-react';
 import L from 'leaflet';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import { motion } from 'framer-motion';
 
 // Fix for Leaflet marker icons
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -40,68 +43,86 @@ const FindHelp = () => {
     : resources.filter(r => r.type === filter);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Find Help Near You</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Find Help Near You</h1>
+        <p className="text-slate-600 max-w-2xl mx-auto">
+          Locate safe shelters, hospitals, and support centers in your area. You are not alone in this journey.
+        </p>
+      </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap justify-center gap-2 mb-8">
         {['All', 'Hospital', 'Shelter', 'Therapy', 'Police'].map(type => (
-          <button
+          <Button
             key={type}
+            variant={filter === type ? 'primary' : 'outline'}
+            size="sm"
             onClick={() => setFilter(type)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition ${filter === type
-                ? 'bg-brand-purple text-white shadow-md'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
+            className="rounded-full"
           >
             {type}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 h-[600px]">
+      <div className="grid lg:grid-cols-3 gap-8 h-[calc(100vh-200px)] min-h-[600px]">
         {/* List View */}
-        <div className="overflow-y-auto pr-2 space-y-4">
+        <div className="lg:col-span-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
           {loading ? (
-            <p>Loading resources...</p>
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-4 text-slate-500">Finding nearby resources...</p>
+            </div>
           ) : filteredResources.length === 0 ? (
-            <p>No resources found.</p>
+            <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
+              <Search className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">No resources found matching your criteria.</p>
+            </div>
           ) : (
-            filteredResources.map(resource => (
-              <div key={resource.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{resource.name}</h3>
-                    <span className={`inline-block mt-1 px-2 py-1 rounded text-xs font-semibold ${resource.type === 'Hospital' ? 'bg-red-100 text-red-800' :
-                        resource.type === 'Shelter' ? 'bg-green-100 text-green-800' :
-                          resource.type === 'Police' ? 'bg-blue-100 text-blue-800' :
-                            'bg-purple-100 text-purple-800'
-                      }`}>
-                      {resource.type}
-                    </span>
+            filteredResources.map((resource, index) => (
+              <motion.div
+                key={resource.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Card className="hover:border-primary/30 transition-colors cursor-pointer group">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-bold text-slate-900 group-hover:text-primary transition-colors">{resource.name}</h3>
+                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium 
+                        ${resource.type === 'Hospital' ? 'bg-red-50 text-red-600' :
+                          resource.type === 'Shelter' ? 'bg-green-50 text-green-600' :
+                            resource.type === 'Police' ? 'bg-blue-50 text-blue-600' :
+                              'bg-purple-50 text-purple-600'
+                        }`}>
+                        {resource.type}
+                      </span>
+                    </div>
+                    <a href={`tel:${resource.phone}`} className="bg-green-50 p-2 rounded-full text-green-600 hover:bg-green-100 transition-colors">
+                      <Phone size={18} />
+                    </a>
                   </div>
-                  <a href={`tel:${resource.phone}`} className="bg-gray-50 p-2 rounded-full hover:bg-gray-100 text-green-600">
-                    <Phone size={20} />
-                  </a>
-                </div>
 
-                <p className="text-gray-600 mt-3 text-sm">{resource.description}</p>
+                  <p className="text-slate-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
 
-                <div className="mt-4 flex items-center text-gray-500 text-sm gap-2">
-                  <MapPin size={16} />
-                  {resource.address}
-                </div>
+                  <div className="flex items-center text-slate-500 text-sm gap-2 mb-4">
+                    <MapPin size={16} className="shrink-0" />
+                    <span className="truncate">{resource.address}</span>
+                  </div>
 
-                <button className="mt-4 w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium">
-                  <Navigation size={16} /> Get Directions
-                </button>
-              </div>
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    <Navigation size={16} /> Get Directions
+                  </Button>
+                </Card>
+              </motion.div>
             ))
           )}
         </div>
 
         {/* Map View */}
-        <div className="h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+        <div className="lg:col-span-2 h-full rounded-2xl overflow-hidden shadow-md border border-slate-200 relative z-0">
           <MapContainer center={[-1.286389, 36.817223]} zoom={13} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -111,9 +132,14 @@ const FindHelp = () => {
               resource.latitude && resource.longitude && (
                 <Marker key={resource.id} position={[resource.latitude, resource.longitude]}>
                   <Popup>
-                    <strong>{resource.name}</strong><br />
-                    {resource.type}<br />
-                    {resource.phone}
+                    <div className="p-1">
+                      <strong className="block text-slate-900 mb-1">{resource.name}</strong>
+                      <span className="text-slate-500 text-xs">{resource.type}</span>
+                      <br />
+                      <a href={`tel:${resource.phone}`} className="text-primary text-sm font-medium mt-1 inline-block">
+                        {resource.phone}
+                      </a>
+                    </div>
                   </Popup>
                 </Marker>
               )
