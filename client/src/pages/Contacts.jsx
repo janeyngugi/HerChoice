@@ -10,6 +10,17 @@ const Contacts = () => {
   const [newContact, setNewContact] = useState({ name: '', role: '', phone: '' });
 
   const fetchContacts = () => {
+    // Mock data for presentation (Kenyan context)
+    const mockContacts = [
+      { id: 1, name: "National GBV Helpline", role: "Emergency Helpline", phone: "1195" },
+      { id: 2, name: "Police Emergency", role: "Police", phone: "999" },
+      { id: 3, name: "Childline Kenya", role: "Child Protection", phone: "116" },
+      { id: 4, name: "Mama Amina", role: "Aunt", phone: "+254 712 345 678" }
+    ];
+    setContacts(mockContacts);
+    setLoading(false);
+
+    /*
     fetch(`${import.meta.env.VITE_API_URL}/api/contacts`)
       .then(res => res.json())
       .then(data => {
@@ -20,6 +31,7 @@ const Contacts = () => {
         console.error("Failed to fetch contacts", err);
         setLoading(false);
       });
+    */
   }
 
   useEffect(() => {

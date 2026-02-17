@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, AlertTriangle, CheckCircle, MapPin, Loader2, Activity, Home as HomeIcon } from 'lucide-react';
+import { Send, AlertTriangle, CheckCircle, MapPin, Loader2, Activity, Home as HomeIcon, Stethoscope } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { motion } from 'framer-motion';
@@ -224,7 +224,7 @@ const ReportIncident = () => {
                     <label htmlFor="needsMedical" className="font-medium text-slate-800 cursor-pointer block">Do you need medical attention?</label>
                     <p className="text-xs text-slate-500">We will recommend nearby hospitals.</p>
                   </div>
-                  <Ambulance size={20} className="text-slate-400" />
+                  <Stethoscope size={20} className="text-slate-400" />
                 </div>
 
                 <div className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg bg-slate-50">

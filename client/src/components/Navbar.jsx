@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Heart, MapPin, Phone, BookOpen, BarChart2, LogOut, User } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import Button from './ui/Button';
@@ -8,20 +8,28 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const NavLink = ({ to, icon: Icon, children }) => (
-    <Link
-      to={to}
-      className="flex items-center gap-1.5 text-slate-600 hover:text-primary font-medium transition-colors"
-    >
-      {Icon && <Icon size={18} />}
-      {children}
-    </Link>
-  );
+  const NavLink = ({ to, icon: Icon, children }) => {
+    const isActive = location.pathname === to;
+    return (
+      <Link
+        to={to}
+        className={`flex items-center gap-1.5 font-medium transition-colors ${isActive
+          ? 'text-primary bg-primary/5 px-3 py-1.5 rounded-full'
+          : 'text-slate-600 hover:text-primary'
+          }`}
+      >
+        {Icon && <Icon size={18} />}
+        {children}
+      </Link>
+    );
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 h-16 transition-all duration-300">

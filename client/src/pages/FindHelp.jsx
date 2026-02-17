@@ -26,6 +26,74 @@ const FindHelp = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Mock data for presentation (Kenyan context)
+    const mockResources = [
+      {
+        id: 1,
+        name: "Kenyatta National Hospital - GBV Center",
+        type: "Hospital",
+        phone: "020 2726300",
+        address: "Hospital Rd, Nairobi",
+        description: "Comprehensive medical and psychological support for survivors of gender-based violence.",
+        latitude: -1.3015,
+        longitude: 36.8016
+      },
+      {
+        id: 2,
+        name: "Usikimye",
+        type: "Shelter",
+        phone: "+254 718 158 400",
+        address: "Nairobi",
+        description: "Shelter and rescue center for victims of domestic violence and SGBV.",
+        latitude: -1.2921,
+        longitude: 36.8219
+      },
+      {
+        id: 3,
+        name: "Kilimani Police Station",
+        type: "Police",
+        phone: "020 2723123",
+        address: "Kilimani, Nairobi",
+        description: "Gender Desk available for reporting cases of violence and abuse.",
+        latitude: -1.2957,
+        longitude: 36.7909
+      },
+      {
+        id: 4,
+        name: "GVRC - Gender Violence Recovery Centre",
+        type: "Hospital",
+        phone: "020 2716300",
+        address: "Argwings Kodhek Rd, Nairobi (Nairobi Women's Hospital)",
+        description: "Specialized medical treatment and psychosocial support for survivors.",
+        latitude: -1.2985,
+        longitude: 36.7905
+      },
+      {
+        id: 5,
+        name: "FIDA Kenya",
+        type: "Therapy",
+        phone: "0800 720 501",
+        address: "Amboseli Road, Off Gitanga Road, Nairobi",
+        description: "Legal aid and counseling services for women.",
+        latitude: -1.2841,
+        longitude: 36.7725
+      },
+      {
+        id: 6,
+        name: "Nairobi City County Gender Department",
+        type: "Therapy",
+        phone: "+254 722 000 000",
+        address: "City Hall Way, Nairobi",
+        description: "Social services and support for gender mainstreaming and protection.",
+        latitude: -1.2864,
+        longitude: 36.8260
+      }
+    ];
+
+    setResources(mockResources);
+    setLoading(false);
+
+    /*
     fetch(`${import.meta.env.VITE_API_URL}/api/resources`)
       .then(res => res.json())
       .then(data => {
@@ -36,6 +104,7 @@ const FindHelp = () => {
         console.error("Failed to fetch resources", err);
         setLoading(false);
       });
+    */
   }, []);
 
   const filteredResources = filter === 'All'

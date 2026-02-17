@@ -18,6 +18,45 @@ const Stories = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Mock data for presentation (Kenyan context)
+    const mockStories = [
+      {
+        id: 1,
+        title: "Finding My Voice in Nairobi",
+        authorAlias: "Wangari",
+        content: "I never thought I would be able to speak up about what happened to me. Growing up in a small estate in Nairobi, silence was the norm. But after finding this community, I realized I wasn't alone. The counseling sessions at the local center gave me the strength to report my abuser. Today, I am studying law to help other women find their justice."
+      },
+      {
+        id: 2,
+        title: "Hope After the Storm",
+        authorAlias: "Amani",
+        content: "The support I received from the helpline saved my life. I was trapped in a situation in Mombasa that felt hopeless. One call changed everything. The operator listened without judgment and guided me to a safe shelter appropriately named 'Salama House'. I am now rebuilding my life and starting a small business. There is always hope."
+      },
+      {
+        id: 3,
+        title: "Breaking the Cycle",
+        authorAlias: "Adhiambo",
+        content: "For years, I thought it was my fault. In Kisumu, traditions sometimes weigh heavy on us. But education opened my eyes. I attended a workshop about GBV and realized abuse is never acceptable. I stood up for myself and my daughters. It was the hardest thing I've ever done, but now we are free and safe."
+      },
+      {
+        id: 4,
+        title: "A New Beginning",
+        authorAlias: "Nanjala",
+        content: "Leaving was terrifying, but staying would have been fatal. With the help of a local NGO in Eldoret, I found the courage to pack my bags. The journey hasn't been easy, but waking up without fear is a blessing I cherish every day. My scars are healing, and I am learning to love myself again."
+      },
+      {
+        id: 5,
+        title: "Strength in Sisterhood",
+        authorAlias: "Fatuma",
+        content: "I found strength in the stories of others. Knowing that women in Kilifi and across Kenya were fighting similar battles gave me courage. We are not victims; we are survivors. Together, we can change the narrative and create a safer world for the next generation of girls."
+      }
+    ];
+
+    setStories(mockStories);
+    setLoading(false);
+
+    /* 
+    // Original fetch logic commented out for presentation
     fetch(`${import.meta.env.VITE_API_URL}/api/stories`)
       .then(res => res.json())
       .then(data => {
@@ -28,6 +67,7 @@ const Stories = () => {
         console.error("Failed to fetch stories", err);
         setLoading(false);
       });
+    */
   }, []);
 
   const handleChange = (e) => {
