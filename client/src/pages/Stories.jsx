@@ -57,7 +57,7 @@ const Stories = () => {
 
     /* 
     // Original fetch logic commented out for presentation
-    fetch(`/api/stories`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/stories`)
       .then(res => res.json())
       .then(data => {
         setStories(data);
@@ -80,7 +80,7 @@ const Stories = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/stories`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/stories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

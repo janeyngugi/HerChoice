@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/reports/stats`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/reports/stats`)
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error(err));

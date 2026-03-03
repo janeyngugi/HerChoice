@@ -94,7 +94,7 @@ const FindHelp = () => {
     setLoading(false);
 
     /*
-    fetch(`/api/resources`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/resources`)
       .then(res => res.json())
       .then(data => {
         setResources(data);
