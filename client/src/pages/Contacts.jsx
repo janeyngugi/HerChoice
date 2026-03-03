@@ -21,7 +21,7 @@ const Contacts = () => {
     setLoading(false);
 
     /*
-    fetch(`${import.meta.env.VITE_API_URL}/api/contacts`)
+    fetch(`/api/contacts`)
       .then(res => res.json())
       .then(data => {
         setContacts(data);
@@ -41,7 +41,7 @@ const Contacts = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/contacts`, {
+      await fetch(`/api/contacts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newContact)
