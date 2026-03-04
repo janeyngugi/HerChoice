@@ -5,7 +5,7 @@ const path = require('path');
 let sequelize;
 
 if (process.env.POSTGRES_URL) {
-  sequelize = new Sequelize(process.env.POSTGRES_URL, {
+  sequelize = new Sequelize(process.env.POSTGRES_URL + '?sslmode=require', {
     dialect: 'postgres',
     dialectModule: require('pg'),
     logging: false,
