@@ -17,12 +17,12 @@ app.use('/api/stories', require('./routes/stories'));
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/auth', require('./routes/auth'));
 
-app.get('/api/test-db', async (req, res) => {
+app.get('/api/db-debug', async (req, res) => {
   try {
     await sequelize.authenticate();
     res.json({ status: 'Database connection has been established successfully.' });
   } catch (error) {
-    res.status(500).json({ error: 'Unable to connect to the database:', details: error.message, stack: error.stack });
+    res.status(500).json({ error: 'Unable to connect to the database:', details: error.message, stack: error.stack, name: error.name });
   }
 });
 
