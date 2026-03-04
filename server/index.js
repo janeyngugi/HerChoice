@@ -26,27 +26,34 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// Database sync and server start
-sequelize.sync().then(async () => {
-  // Check if seeding is needed (simple check: if no resources exist)
-  try {
-    const Resource = require('./models/Resource');
-    const count = await Resource.count();
-    if (count === 0) {
-      console.log('Seeding database...');
-      await seed();
+// Database sync and server start (Skip sync on Vercel to prevent serverless hangs)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  sequelize.sync().then(async () => {
+    // Check if seeding is needed (simple check: if no resources exist)
+    try {
+      const Resource = require('./models/Resource');
+      const count = await Resource.count();
+      if (count === 0) {
+        console.log('Seeding database...');
+        await seed();
+      }
+    } catch (error) {
+      console.error("Error during seeding check:", error);
     }
-  } catch (error) {
-    console.error("Error during seeding check:", error);
-  }
 
-  if (require.main === module) {
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  }
-}).catch(err => {
-  console.error('Unable to connect to the database:', err);
-});
+    if (require.main === module) {
+      app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+      });
+    }
+  }).catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+} else if (require.main === module) {
+  // If running locally but skipping sync, still start the server
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
